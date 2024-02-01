@@ -1,0 +1,50 @@
+from videoprops import get_video_properties as gvp
+import os
+import sys
+
+def main(path):
+    for video in os.listdir(path):  # Iterate through files in the directory
+        video_path = os.path.join(path, video)
+        video_specs = gvp(video_path)
+
+        video_name = format_name(video)
+        file_size = os.path.getsize(video_path)
+        file_type = video_specs["codec_name"].capitalize()
+        resolution = "{}*{}".format(video_specs["width"], video_specs["height"])
+        duration = round(float(video_specs["duration"]), 1)
+        frame_rate = divider(video_specs["avg_frame_rate"])
+        size_in_giga = converter(file_size)
+        
+        print(video_name)
+        print(f"File Size: {size_in_giga}")
+        print(f"File Type: {file_type}")
+        print(f"Resolution: {resolution}")
+        print(f"Duration: {duration} seconds")
+        print(f"Frame Rate: {frame_rate} FPS")
+        print("\n")
+
+def format_name(video):
+    split_name1 = video.split("_")
+    splitted = split_name1[1]
+    get_number = splitted.split(".")
+    fixed_name = "TheNewEmployee_S001_E001_SEQ{}".format(get_number[0])
+    return fixed_name
+
+def converter(file_size):
+    to_giga = int(file_size) / 1e+6
+    converted_mb = "{}MB".format(to_giga)
+    return converted_mb
+
+def divider(frame_rate):
+    split_no = frame_rate.split("/")
+    split_frame_rate = int(split_no[0]) / int(split_no[1])
+    return round(split_frame_rate)
+
+if __name__ == '__main__':
+    cwd = os.getcwd()
+    try:
+        path = sys.argv[1]
+    except IndexError:
+        path = cwd
+    main(path)
+    print(f'The current value for path is: {path}')
